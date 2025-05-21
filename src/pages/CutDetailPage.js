@@ -1,74 +1,151 @@
-import React, { useEffect } from 'react';
-import { useFilters } from '../contexts/FilterContext';
-import { Helmet } from 'react-helmet-async';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { commonText } from '../data/text';
 
-// Components
-import FilterSection from '../components/FilterSection';
-import MeatCard from '../components/MeatCard';
-import Loading from '../components/common/Loading';
-
-const HomePage = () => {
-  const { results, isLoading, applyFilters, filterState } = useFilters();
+const CutDetailPage = () => {
+  const { cutId } = useParams();
+  const navigate = useNavigate();
   
-  // Apply initial filters on component mount
-  useEffect(() => {
-    applyFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
+  const [cut, setCut] = useState(null);
   
-  // Generate the results heading text
-  const getResultsCountText = () => {
-    if (isLoading) return commonText.loading;
-    
-    if (results.length === 0) return commonText.noResults;
-    
-    return commonText.showingCount(results.length);
+  // Demo cut data for testing
+  const sampleCut = {
+    id: 'topside',
+    name: 'Topside',
+    type: 'Beef',
+    description: 'A lean cut from the hindquarter, commonly used for roasting. Its leanness makes it a popular choice for those looking for a healthier option.',
+    image: '/assets/images/beef/topside.jpg',
+    keywords: ['roast', 'lean', 'economical', 'traditional'],
+    cookingMethods: ['Roasting', 'Pot-roasting', 'Braising'],
+    characteristics: 'Lean, tender when cooked properly, economical',
+    alternatives: ['Silverside', 'Top Rump'],
+    fullDescription: `
+      <h2>Topside</h2>
+      <p>Topside is a lean cut from the hindquarter of the animal, commonly used for roasting joints.</p>
+      <h3>Characteristics</h3>
+      <ul>
+        <li>Lean with minimal fat</li>
+        <li>Tender when cooked properly</li>
+        <li>Economical compared to premium cuts</li>
+        <li>Traditional British roasting joint</li>
+      </ul>
+    `
   };
   
+  // Simulating data fetching
+  useEffect(() => {
+    setIsLoading(true);
+    
+    // Simulated data fetch delay
+    const timer = setTimeout(() => {
+      // In a real app, you'd fetch data based on cutId
+      setCut(sampleCut);
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [cutId]);
+  
+  // Handle back button click
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+  
+  if (isLoading) {
+    return (
+      <div className="loading-indicator">
+        <span className="sr-only">Loading cut details</span>
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+  
+  if (!cut) {
+    return (
+      <div className="error-content">
+        <h2>Cut Not Found</h2>
+        <p>Sorry, the meat cut you're looking for does not exist.</p>
+        <Link to="/" className="primary-btn">Go to Home Page</Link>
+      </div>
+    );
+  }
+  
   return (
-    <>
-      <Helmet>
-        <title>{commonText.appName}</title>
-        <meta 
-          name="description" 
-          content="Interactive guide to meat cuts and purchasing information from the Agriculture and Horticulture Development Board"
-        />
-      </Helmet>
+    <section className="cut-detail-container">
+      <nav className="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to={`/?type=${cut.type.toLowerCase()}`}>{cut.type}</Link></li>
+          <li aria-current="page">{cut.name}</li>
+        </ol>
+      </nav>
       
-      <section className="hero">
-        <div className="hero-content">
-          <h2>Find the Perfect Cut</h2>
-          <p>Explore our comprehensive guide to selecting the right meat cut for any dish or occasion.</p>
-        </div>
-      </section>
-      
-      <FilterSection />
-      
-      <section className="results-section" aria-labelledby="resultsHeading">
-        <h2 id="resultsHeading">{commonText.resultsHeading}</h2>
-        <p id="resultsCount" aria-live="polite" className="results-count">
-          {getResultsCountText()}
-        </p>
-        
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div id="resultsGrid" className="results-grid">
-            {results.length === 0 ? (
-              <p id="noResults" className="no-results">
-                {commonText.noResults}
-              </p>
-            ) : (
-              results.map(cut => (
-                <MeatCard key={cut.id} cut={cut} />
-              ))
-            )}
+      <div className="cut-detail-header">
+        <div className="cut-detail-info">
+          <span className="cut-detail-type">{cut.type}</span>
+          <h2>{cut.name}</h2>
+          <p className="cut-detail-description">{cut.description}</p>
+          
+          <div className="cut-detail-keywords">
+            {cut.keywords.map(keyword => (
+              <Link 
+                key={keyword} 
+                to={`/?keywords=${keyword}`} 
+                className="keyword-tag"
+              >
+                {keyword}
+              </Link>
+            ))}
           </div>
-        )}
-      </section>
-    </>
+        </div>
+      </div>
+      
+      <div className="cut-detail-content">
+        <div className="cut-detail-main">
+          <div dangerouslySetInnerHTML={{ __html: cut.fullDescription }} />
+        </div>
+        
+        <aside className="cut-detail-sidebar">
+          <div className="sidebar-section">
+            <h3>{commonText.cookingMethods || 'Cooking Methods'}</h3>
+            <ul className="cooking-methods-list">
+              {cut.cookingMethods.map(method => (
+                <li key={method}>{method}</li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className="sidebar-section">
+            <h3>{commonText.characteristics || 'Characteristics'}</h3>
+            <p>{cut.characteristics}</p>
+          </div>
+          
+          <div className="sidebar-section">
+            <h3>{commonText.alternatives || 'Alternative Cuts'}</h3>
+            <ul className="alternatives-list">
+              {cut.alternatives.map(alt => (
+                <li key={alt}>{alt}</li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      </div>
+      
+      <div className="cut-detail-actions">
+        <button 
+          className="secondary-btn"
+          onClick={handleBack}
+        >
+          Back to Results
+        </button>
+      </div>
+    </section>
   );
 };
 
-export default HomePage;
+export default CutDetailPage;
