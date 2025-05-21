@@ -1,10 +1,13 @@
 import React, { useContext } from 'react';
-import { commonText } from '../data/text';
 import AppContext from '../contexts/AppContext';
 
 const Footer = () => {
-  const { handleOpenAboutModal, handleOpenPrivacyModal, handleOpenAccessibilityModal } = useContext(AppContext);
+  const appContext = useContext(AppContext);
   const currentYear = new Date().getFullYear();
+  
+  // Simplified with fallback functions if context values are not available
+  const handleOpenPrivacyModal = appContext?.handleOpenPrivacyModal || (() => {});
+  const handleOpenAccessibilityModal = appContext?.handleOpenAccessibilityModal || (() => {});
   
   return (
     <footer className="app-footer">
@@ -18,7 +21,7 @@ const Footer = () => {
         </div>
         
         <div className="footer-links">
-          <h3>{commonText.quickLinks}</h3>
+          <h3>Quick Links</h3>
           <ul>
             <li>
               <a 
@@ -26,7 +29,7 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                {commonText.ahdbWebsite}
+                AHDB Website
               </a>
             </li>
             <li>
@@ -35,7 +38,7 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                {commonText.appName}
+                Meat Purchasing Guide
               </a>
             </li>
             <li>
@@ -66,17 +69,17 @@ const Footer = () => {
         </div>
         
         <div className="footer-contact">
-          <h3>{commonText.contact}</h3>
+          <h3>Contact</h3>
           <address>
-            <p>{commonText.orgName}</p>
-            <p>{commonText.orgAddress}</p>
-            <p>Email: <a href={`mailto:${commonText.orgEmail}`}>{commonText.orgEmail}</a></p>
+            <p>Agriculture and Horticulture Development Board</p>
+            <p>Stoneleigh Park, Kenilworth, Warwickshire, CV8 2TL</p>
+            <p>Email: <a href="mailto:info@ahdb.org.uk">info@ahdb.org.uk</a></p>
           </address>
         </div>
       </div>
       
       <div className="copyright">
-        <p>{commonText.copyright(currentYear)}</p>
+        <p>&copy; {currentYear} Agriculture and Horticulture Development Board. All rights reserved.</p>
       </div>
     </footer>
   );
