@@ -25,10 +25,10 @@ function App() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [isAppInstalled, setIsAppInstalled] = useState(false);
   
-  // Modal states for AppProvider
-  const [aboutModalOpen, setAboutModalOpen] = useState(false);
-  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
-  const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
+  // Modal states and handlers for AppProvider
+  const [, setAboutModalOpen] = useState(false);
+  const [, setPrivacyModalOpen] = useState(false);
+  const [, setAccessibilityModalOpen] = useState(false);
   
   // Check if app is already installed
   useEffect(() => {
@@ -146,5 +146,8 @@ function App() {
     </AppProvider>
   );
 }
+
+export default App;
+
 
 export default App;
