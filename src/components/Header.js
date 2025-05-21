@@ -52,14 +52,21 @@ const Header = () => {
             </a>
           </li>
           <li>
-            <a href="#" id="aboutLink">
+            <button 
+              id="aboutLink"
+              className="nav-button"
+              onClick={(e) => e.preventDefault()}
+            >
               About
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
     </header>
   );
 };
+
+export default Header;
+
 
 export default Header;
