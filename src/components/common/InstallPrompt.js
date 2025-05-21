@@ -1,31 +1,29 @@
 import React from 'react';
-import { commonText } from '../../data/text';
-import Button from './Button';
 
 const InstallPrompt = ({ onInstall, onDismiss }) => {
   return (
     <div 
       id="installPrompt" 
-      className="install-prompt show"
+      className="install-prompt"
       aria-hidden="false"
     >
       <div className="prompt-content">
-        <p>{commonText.installPrompt}</p>
+        <p>Add this app to your home screen for quick access, even when offline</p>
         <div className="prompt-actions">
-          <Button 
-            variant="primary" 
+          <button 
+            className="primary-btn"
             onClick={onInstall}
             id="installButton"
           >
-            {commonText.install}
-          </Button>
-          <Button 
-            variant="secondary" 
+            Install
+          </button>
+          <button 
+            className="secondary-btn"
             onClick={onDismiss}
             id="dismissPrompt"
           >
-            {commonText.notNow}
-          </Button>
+            Not Now
+          </button>
         </div>
       </div>
     </div>
