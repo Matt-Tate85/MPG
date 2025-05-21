@@ -55,6 +55,30 @@ export const commonText = {
   installPrompt: "Add this app to your home screen for quick access, even when offline",
 };
 
+// Error page text
+export const errorText = {
+  notFound: {
+    title: "Page Not Found",
+    message: "Sorry, the page you are looking for does not exist.",
+    action: "Go to Home Page"
+  },
+  offline: {
+    title: "You're Offline",
+    message: "Please check your internet connection and try again.",
+    action: "Try Again"
+  }
+};
+
+// Help text for assistive technology
+export const a11yText = {
+  skipToContent: "Skip to main content",
+  toggleMenu: "Toggle menu",
+  searchButton: "Search",
+  dismissOffline: "Dismiss offline notification",
+  loadingContent: "Loading content",
+  closeModal: "Close modal"
+};
+
 // Cut detail descriptions - can be expanded with specific text for each cut
 export const cutDescriptions = {
   topside: "A lean cut from the hindquarter, ideal for roasting. The topside is one of the most popular joints for traditional Sunday roasts.",
@@ -65,5 +89,7 @@ export const cutDescriptions = {
 // Export all text groups
 export default {
   common: commonText,
+  error: errorText,
+  a11y: a11yText,
   cutDescriptions: cutDescriptions
 };
