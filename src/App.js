@@ -25,6 +25,11 @@ function App() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [isAppInstalled, setIsAppInstalled] = useState(false);
   
+  // Modal states for AppProvider
+  const [aboutModalOpen, setAboutModalOpen] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
+  
   // Check if app is already installed
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches || 
@@ -50,9 +55,7 @@ function App() {
   // Handle install prompt
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
-      // Stash the event so it can be triggered later
       setInstallPrompt(e);
     };
     
@@ -81,46 +84,40 @@ function App() {
   const handleInstall = () => {
     if (!installPrompt) return;
     
-    // Show the install prompt
     installPrompt.prompt();
     
-    // Wait for the user to respond to the prompt
     installPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted the install prompt');
       } else {
         console.log('User dismissed the install prompt');
       }
-      // Clear the saved prompt since it can't be used again
       setInstallPrompt(null);
     });
   };
   
-  // Sample modals handlers for the AppProvider
-  const [aboutModalOpen, setAboutModalOpen] = useState(false);
-  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
-  const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
-  
+  // Modal handlers
   const handleOpenAboutModal = () => setAboutModalOpen(true);
   const handleCloseAboutModal = () => setAboutModalOpen(false);
-  
   const handleOpenPrivacyModal = () => setPrivacyModalOpen(true);
   const handleClosePrivacyModal = () => setPrivacyModalOpen(false);
-  
   const handleOpenAccessibilityModal = () => setAccessibilityModalOpen(true);
   const handleCloseAccessibilityModal = () => setAccessibilityModalOpen(false);
   
+  // App context value
+  const appContextValue = {
+    isOnline,
+    isAppInstalled,
+    handleOpenAboutModal,
+    handleCloseAboutModal,
+    handleOpenPrivacyModal,
+    handleClosePrivacyModal,
+    handleOpenAccessibilityModal,
+    handleCloseAccessibilityModal
+  };
+  
   return (
-    <AppProvider value={{ 
-      isOnline, 
-      isAppInstalled,
-      handleOpenAboutModal,
-      handleCloseAboutModal,
-      handleOpenPrivacyModal,
-      handleClosePrivacyModal,
-      handleOpenAccessibilityModal,
-      handleCloseAccessibilityModal
-    }}>
+    <AppProvider value={appContextValue}>
       <FilterProvider>
         <Router>
           <div className="app">
@@ -142,7 +139,6 @@ function App() {
               <InstallPrompt onInstall={handleInstall} onDismiss={() => setInstallPrompt(null)} />
             )}
             
-            {/* Skip link for accessibility */}
             <a href="#mainContent" className="skip-link">Skip to main content</a>
           </div>
         </Router>
@@ -150,9 +146,5 @@ function App() {
     </AppProvider>
   );
 }
-
-export default App;
-
-
 
 export default App;
