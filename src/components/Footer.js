@@ -42,28 +42,28 @@ const Footer = () => {
               </a>
             </li>
             <li>
-              <a 
-                href="#" 
+              <button 
                 id="privacyLink"
+                className="footer-button"
                 onClick={(e) => {
                   e.preventDefault();
                   handleOpenPrivacyModal();
                 }}
               >
                 Privacy Policy
-              </a>
+              </button>
             </li>
             <li>
-              <a 
-                href="#" 
+              <button 
                 id="accessibilityLink"
+                className="footer-button"
                 onClick={(e) => {
                   e.preventDefault();
                   handleOpenAccessibilityModal();
                 }}
               >
                 Accessibility
-              </a>
+              </button>
             </li>
           </ul>
         </div>
@@ -84,5 +84,8 @@ const Footer = () => {
     </footer>
   );
 };
+
+export default Footer;
+
 
 export default Footer;
