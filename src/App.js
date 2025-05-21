@@ -96,8 +96,31 @@ function App() {
     });
   };
   
+  // Sample modals handlers for the AppProvider
+  const [aboutModalOpen, setAboutModalOpen] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [accessibilityModalOpen, setAccessibilityModalOpen] = useState(false);
+  
+  const handleOpenAboutModal = () => setAboutModalOpen(true);
+  const handleCloseAboutModal = () => setAboutModalOpen(false);
+  
+  const handleOpenPrivacyModal = () => setPrivacyModalOpen(true);
+  const handleClosePrivacyModal = () => setPrivacyModalOpen(false);
+  
+  const handleOpenAccessibilityModal = () => setAccessibilityModalOpen(true);
+  const handleCloseAccessibilityModal = () => setAccessibilityModalOpen(false);
+  
   return (
-    <AppProvider value={{ isOnline, isAppInstalled }}>
+    <AppProvider value={{ 
+      isOnline, 
+      isAppInstalled,
+      handleOpenAboutModal,
+      handleCloseAboutModal,
+      handleOpenPrivacyModal,
+      handleClosePrivacyModal,
+      handleOpenAccessibilityModal,
+      handleCloseAccessibilityModal
+    }}>
       <FilterProvider>
         <Router>
           <div className="app">
@@ -127,5 +150,8 @@ function App() {
     </AppProvider>
   );
 }
+
+export default App;
+
 
 export default App;
