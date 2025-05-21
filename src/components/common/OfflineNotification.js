@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { commonText, a11yText } from '../../data/text';
 
 const OfflineNotification = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -18,11 +17,11 @@ const OfflineNotification = () => {
       aria-hidden="false"
       role="alert"
     >
-      <p>{commonText.offline}</p>
+      <p>You are currently offline. Some features may be limited.</p>
       <button 
         id="dismissOfflineNotification" 
         onClick={handleDismiss}
-        aria-label={a11yText.dismissOffline}
+        aria-label="Dismiss offline notification"
       >
         &times;
       </button>
