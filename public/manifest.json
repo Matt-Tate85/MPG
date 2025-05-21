@@ -1,0 +1,119 @@
+{
+    "name": "AHDB Meat Purchasing Guide",
+    "short_name": "Meat Guide",
+    "description": "Interactive guide to meat cuts and purchasing information from the Agriculture and Horticulture Development Board",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#dd1e25",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "assets/icons/icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "assets/icons/maskable-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Beef Cuts",
+            "short_name": "Beef",
+            "description": "View beef cuts",
+            "url": "/index.html?type=beef",
+            "icons": [{ "src": "assets/icons/beef-icon.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Lamb Cuts",
+            "short_name": "Lamb",
+            "description": "View lamb cuts",
+            "url": "/index.html?type=lamb",
+            "icons": [{ "src": "assets/icons/lamb-icon.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Pork Cuts",
+            "short_name": "Pork",
+            "description": "View pork cuts",
+            "url": "/index.html?type=pork",
+            "icons": [{ "src": "assets/icons/pork-icon.png", "sizes": "192x192" }]
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "assets/screenshots/screen1.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg",
+            "platform": "wide",
+            "label": "Home screen of the AHDB Meat Purchasing Guide"
+        },
+        {
+            "src": "assets/screenshots/screen2.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg",
+            "platform": "wide",
+            "label": "Filtering meat cuts by type and keywords"
+        },
+        {
+            "src": "assets/screenshots/screen3.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg",
+            "platform": "wide",
+            "label": "Detailed view of a specific meat cut"
+        }
+    ],
+    "categories": ["food", "education", "lifestyle", "utilities"],
+    "dir": "ltr",
+    "lang": "en-GB",
+    "prefer_related_applications": false,
+    "related_applications": [],
+    "scope": "/",
+    "iarc_rating_id": ""
+}
