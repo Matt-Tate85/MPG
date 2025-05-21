@@ -86,10 +86,12 @@ export const cutDescriptions = {
   // Add more cut-specific descriptions as needed
 };
 
-// Export all text groups
-export default {
+// Create a named export for the default object
+const textContent = {
   common: commonText,
   error: errorText,
   a11y: a11yText,
   cutDescriptions: cutDescriptions
 };
+
+export default textContent;
