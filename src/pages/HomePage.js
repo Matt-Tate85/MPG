@@ -2,10 +2,6 @@ import React, { useEffect } from 'react';
 import { useFilters } from '../contexts/FilterContext';
 import { commonText } from '../data/text';
 
-// Components
-import FilterSection from '../components/FilterSection';
-import MeatCard from '../components/MeatCard';
-
 const HomePage = () => {
   const { results, isLoading, applyFilters } = useFilters();
   
@@ -93,5 +89,8 @@ const HomePage = () => {
     </>
   );
 };
+
+export default HomePage;
+
 
 export default HomePage;
