@@ -1,3 +1,4 @@
+// Fixed Footer.js
 import React, { useContext } from 'react';
 import AppContext from '../contexts/AppContext';
 
@@ -84,8 +85,5 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;
-
 
 export default Footer;
