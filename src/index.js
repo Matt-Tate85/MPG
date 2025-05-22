@@ -6,12 +6,40 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
-// Get the root element
-const rootElement = document.getElementById('root');
+// This function creates a diagnostic report of the DOM structure
+function logDomStructure() {
+  console.log('HTML Body children:', Array.from(document.body.children).map(el => ({
+    tagName: el.tagName,
+    id: el.id,
+    className: el.className
+  })));
+  
+  console.log('Looking for #root:', document.getElementById('root'));
+  console.log('Looking for #mainContent:', document.getElementById('mainContent'));
+}
 
-// Add defensive check for root element
-if (rootElement) {
-  // Create root only if the element exists
+// Log the DOM structure to help diagnose the issue
+logDomStructure();
+
+// Try to find a suitable mount point
+let rootElement = document.getElementById('root');
+
+// If root element doesn't exist, try to find mainContent
+if (!rootElement) {
+  rootElement = document.getElementById('mainContent');
+  console.log('Root element not found, trying to use mainContent instead:', rootElement);
+}
+
+// If neither exists, create a new div and append it to the body
+if (!rootElement) {
+  console.log('Creating new root element');
+  rootElement = document.createElement('div');
+  rootElement.id = 'root';
+  document.body.appendChild(rootElement);
+}
+
+// Now we should have a valid element to mount to
+try {
   const root = ReactDOM.createRoot(rootElement);
   
   root.render(
@@ -21,8 +49,10 @@ if (rootElement) {
       </HelmetProvider>
     </React.StrictMode>
   );
-} else {
-  console.error('Root element not found - React cannot mount the application!');
+  
+  console.log('React successfully mounted to:', rootElement);
+} catch (error) {
+  console.error('Failed to mount React application:', error);
 }
 
 // If you want your app to work offline and load faster, you can change
