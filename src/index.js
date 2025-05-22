@@ -6,14 +6,24 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
-  </React.StrictMode>
-);
+// Get the root element
+const rootElement = document.getElementById('root');
+
+// Add defensive check for root element
+if (rootElement) {
+  // Create root only if the element exists
+  const root = ReactDOM.createRoot(rootElement);
+  
+  root.render(
+    <React.StrictMode>
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
+    </React.StrictMode>
+  );
+} else {
+  console.error('Root element not found - React cannot mount the application!');
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note that this comes with some pitfalls.
