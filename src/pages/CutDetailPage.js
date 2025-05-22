@@ -1,3 +1,4 @@
+// Fixed CutDetail.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { commonText } from '../data/text';
@@ -33,19 +34,22 @@ const CutDetailPage = () => {
     `
   };
   
-  // Simulating data fetching
+  // Simulating data fetching - using a reference to sampleCut without causing dependencies
+  // This is a workaround for the demo; in a real app, you'd fetch from an API
   useEffect(() => {
     setIsLoading(true);
     
     // Simulated data fetch delay
     const timer = setTimeout(() => {
       // In a real app, you'd fetch data based on cutId
+      // For demo, we're using the sample data directly
       setCut(sampleCut);
       setIsLoading(false);
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [cutId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cutId]); // only depend on cutId, not sampleCut
   
   // Handle back button click
   const handleBack = () => {
