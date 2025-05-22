@@ -1,55 +1,44 @@
-// Fixed CutDetail.js
+// src/pages/CutDetailPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { commonText } from '../data/text';
+import { Helmet } from 'react-helmet-async';
+import { getCutById, getRelatedCuts } from '../services/meatDataService';
 
 const CutDetailPage = () => {
   const { cutId } = useParams();
   const navigate = useNavigate();
   
-  const [isLoading, setIsLoading] = useState(true);
   const [cut, setCut] = useState(null);
+  const [relatedCuts, setRelatedCuts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  // Demo cut data for testing
-  const sampleCut = {
-    id: 'topside',
-    name: 'Topside',
-    type: 'Beef',
-    description: 'A lean cut from the hindquarter, commonly used for roasting. Its leanness makes it a popular choice for those looking for a healthier option.',
-    image: '/assets/images/beef/topside.jpg',
-    keywords: ['roast', 'lean', 'economical', 'traditional'],
-    cookingMethods: ['Roasting', 'Pot-roasting', 'Braising'],
-    characteristics: 'Lean, tender when cooked properly, economical',
-    alternatives: ['Silverside', 'Top Rump'],
-    fullDescription: `
-      <h2>Topside</h2>
-      <p>Topside is a lean cut from the hindquarter of the animal, commonly used for roasting joints.</p>
-      <h3>Characteristics</h3>
-      <ul>
-        <li>Lean with minimal fat</li>
-        <li>Tender when cooked properly</li>
-        <li>Economical compared to premium cuts</li>
-        <li>Traditional British roasting joint</li>
-      </ul>
-    `
-  };
-  
-  // Simulating data fetching - using a reference to sampleCut without causing dependencies
-  // This is a workaround for the demo; in a real app, you'd fetch from an API
+  // Fetch cut data and related cuts
   useEffect(() => {
-    setIsLoading(true);
+    setLoading(true);
     
-    // Simulated data fetch delay
-    const timer = setTimeout(() => {
-      // In a real app, you'd fetch data based on cutId
-      // For demo, we're using the sample data directly
-      setCut(sampleCut);
-      setIsLoading(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cutId]); // only depend on cutId, not sampleCut
+    try {
+      // In a real app, this might be an API call
+      // Here we're using our local data service
+      const cutData = getCutById(cutId);
+      
+      if (cutData) {
+        setCut(cutData);
+        setRelatedCuts(getRelatedCuts(cutData, 3));
+      } else {
+        setError('Cut not found');
+      }
+      
+      // Simulate network delay
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    } catch (err) {
+      console.error('Error fetching cut details:', err);
+      setError('Failed to fetch cut details');
+      setLoading(false);
+    }
+  }, [cutId]);
   
   // Handle back button click
   const handleBack = () => {
@@ -60,7 +49,8 @@ const CutDetailPage = () => {
     }
   };
   
-  if (isLoading) {
+  // Handle loading state
+  if (loading) {
     return (
       <div className="loading-indicator">
         <span className="sr-only">Loading cut details</span>
@@ -69,86 +59,160 @@ const CutDetailPage = () => {
     );
   }
   
-  if (!cut) {
+  // Handle error state
+  if (error || !cut) {
     return (
       <div className="error-content">
         <h2>Cut Not Found</h2>
-        <p>Sorry, the meat cut you're looking for does not exist.</p>
+        <p>Sorry, the meat cut you're looking for does not exist or could not be loaded.</p>
         <Link to="/" className="primary-btn">Go to Home Page</Link>
       </div>
     );
   }
   
   return (
-    <section className="cut-detail-container">
-      <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <ol>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to={`/?type=${cut.type.toLowerCase()}`}>{cut.type}</Link></li>
-          <li aria-current="page">{cut.name}</li>
-        </ol>
-      </nav>
+    <>
+      <Helmet>
+        <title>{cut.name} - AHDB Meat Purchasing Guide</title>
+        <meta name="description" content={cut.description} />
+      </Helmet>
       
-      <div className="cut-detail-header">
-        <div className="cut-detail-info">
-          <span className="cut-detail-type">{cut.type}</span>
-          <h2>{cut.name}</h2>
-          <p className="cut-detail-description">{cut.description}</p>
-          
-          <div className="cut-detail-keywords">
-            {cut.keywords.map(keyword => (
-              <Link 
-                key={keyword} 
-                to={`/?keywords=${keyword}`} 
-                className="keyword-tag"
-              >
-                {keyword}
-              </Link>
-            ))}
+      <section className="cut-detail-container">
+        <nav className="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to={`/?type=${cut.type.toLowerCase()}`}>{cut.type}</Link></li>
+            <li aria-current="page">{cut.name}</li>
+          </ol>
+        </nav>
+        
+        <div className="cut-detail-header">
+          <div className="cut-detail-info">
+            <span className="cut-detail-type">{cut.type}</span>
+            <h2>{cut.name}</h2>
+            <p className="cut-detail-description">{cut.description}</p>
+            
+            <div className="cut-detail-keywords">
+              {cut.keywords.map(keyword => (
+                <Link 
+                  key={keyword} 
+                  to={`/?keywords=${keyword}`} 
+                  className="keyword-tag"
+                >
+                  {keyword}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
-      
-      <div className="cut-detail-content">
-        <div className="cut-detail-main">
-          <div dangerouslySetInnerHTML={{ __html: cut.fullDescription }} />
+          
+          <div className="cut-detail-image-container">
+            <img src={cut.image} alt={cut.name} className="cut-detail-image" />
+          </div>
         </div>
         
-        <aside className="cut-detail-sidebar">
-          <div className="sidebar-section">
-            <h3>{commonText.cookingMethods || 'Cooking Methods'}</h3>
-            <ul className="cooking-methods-list">
-              {cut.cookingMethods.map(method => (
-                <li key={method}>{method}</li>
-              ))}
-            </ul>
+        <div className="cut-detail-content">
+          <div className="cut-detail-main">
+            <div dangerouslySetInnerHTML={{ __html: cut.fullDescription }} />
           </div>
           
-          <div className="sidebar-section">
-            <h3>{commonText.characteristics || 'Characteristics'}</h3>
-            <p>{cut.characteristics}</p>
-          </div>
-          
-          <div className="sidebar-section">
-            <h3>{commonText.alternatives || 'Alternative Cuts'}</h3>
-            <ul className="alternatives-list">
-              {cut.alternatives.map(alt => (
-                <li key={alt}>{alt}</li>
+          <aside className="cut-detail-sidebar">
+            <div className="sidebar-section">
+              <h3>Cooking Methods</h3>
+              <ul className="cooking-methods-list">
+                {cut.cookingMethods.map(method => (
+                  <li key={method}>{method}</li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="sidebar-section">
+              <h3>Characteristics</h3>
+              <p>{cut.characteristics}</p>
+            </div>
+            
+            <div className="sidebar-section">
+              <h3>Alternative Cuts</h3>
+              <ul className="alternatives-list">
+                {cut.alternatives.map(alt => {
+                  const altCut = getCutById(alt.toLowerCase().replace(/\s+/g, '-'));
+                  if (altCut) {
+                    return (
+                      <li key={alt}>
+                        <Link to={`/cut/${altCut.id}`}>{alt}</Link>
+                      </li>
+                    );
+                  } else {
+                    return <li key={alt}>{alt}</li>;
+                  }
+                })}
+              </ul>
+            </div>
+            
+            <div className="sidebar-section">
+              <h3>External Resources</h3>
+              <a 
+                href={cut.externalUrl} 
+                className="external-link" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                View on AHDB Website
+                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24">
+                  <path d="M19 19H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                </svg>
+              </a>
+            </div>
+          </aside>
+        </div>
+        
+        {relatedCuts.length > 0 && (
+          <div className="related-cuts">
+            <h3>Related Cuts</h3>
+            <div className="related-cuts-grid">
+              {relatedCuts.map(relatedCut => (
+                <Link 
+                  key={relatedCut.id}
+                  to={`/cut/${relatedCut.id}`}
+                  className="meat-card"
+                >
+                  <img src={relatedCut.image} alt={relatedCut.name} className="meat-image" />
+                  <div className="meat-content">
+                    <span className="meat-type">{relatedCut.type}</span>
+                    <h3 className="meat-title">{relatedCut.name}</h3>
+                    <div className="meat-keywords">
+                      {relatedCut.keywords.slice(0, 3).map(keyword => (
+                        <span key={keyword} className="keyword-tag">{keyword}</span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
               ))}
-            </ul>
+            </div>
           </div>
-        </aside>
-      </div>
-      
-      <div className="cut-detail-actions">
-        <button 
-          className="secondary-btn"
-          onClick={handleBack}
-        >
-          Back to Results
-        </button>
-      </div>
-    </section>
+        )}
+        
+        <div className="cut-detail-actions">
+          <button 
+            className="secondary-btn"
+            onClick={handleBack}
+          >
+            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+            </svg>
+            Back to Results
+          </button>
+          
+          <a 
+            href={cut.externalUrl}
+            className="primary-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on AHDB Website
+          </a>
+        </div>
+      </section>
+    </>
   );
 };
 
