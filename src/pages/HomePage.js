@@ -1,23 +1,59 @@
-import React, { useEffect } from 'react';
-import { useFilters } from '../contexts/FilterContext';
-import { commonText } from '../data/text';
+// src/pages/HomePage.js
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import FilterSection from '../components/FilterSection';
+import ResultsSection from '../components/ResultsSection';
+import { filterCuts } from '../services/meatDataService';
 
 const HomePage = () => {
-  const { results, isLoading, applyFilters } = useFilters();
+  const location = useLocation();
   
-  // Apply initial filters on component mount
+  // State for results and loading status
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Parse query parameters when component mounts or URL changes
   useEffect(() => {
-    applyFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type') || 'all';
+    const searchParam = searchParams.get('search') || '';
+    const keywordsParam = searchParams.get('keywords');
+    
+    const newFilterCriteria = {
+      type: typeParam,
+      search: searchParam,
+      keywords: keywordsParam ? keywordsParam.split(',') : []
+    };
+    
+    // Apply filters with the new criteria
+    applyFilters(newFilterCriteria);
+  }, [location.search]);
   
-  // Generate the results heading text
-  const getResultsCountText = () => {
-    if (isLoading) return commonText.loading;
+  // Apply filters and update results
+  const applyFilters = (criteria) => {
+    setLoading(true);
     
-    if (results.length === 0) return commonText.noResults;
-    
-    return `Showing ${results.length} ${results.length === 1 ? 'cut' : 'cuts'}`;
+    try {
+      // In a real app, this might be an API call
+      // Here we're using our local data service
+      const filteredResults = filterCuts(criteria);
+      
+      // Simulate network delay
+      setTimeout(() => {
+        setResults(filteredResults);
+        setLoading(false);
+      }, 300);
+    } catch (err) {
+      console.error('Error filtering cuts:', err);
+      setError('Failed to filter meat cuts');
+      setLoading(false);
+    }
+  };
+  
+  // Handle filter changes from FilterSection
+  const handleFilterChange = (newCriteria) => {
+    applyFilters(newCriteria);
   };
   
   return (
@@ -29,63 +65,13 @@ const HomePage = () => {
         </div>
       </section>
       
-      <div className="filter-section">
-        <h2 id="filterHeading" className="sr-only">Filter Options</h2>
-        
-        <div className="search-container">
-          <label htmlFor="searchInput" className="sr-only">Search by keyword</label>
-          <input 
-            type="search" 
-            id="searchInput" 
-            name="search" 
-            placeholder="Search by keyword (e.g. roast, lean, tender)"
-            aria-label="Search for meat cuts by keyword"
-          />
-          <button id="searchButton" aria-label="Search">Search</button>
-        </div>
-        
-        <div className="filter-controls">
-          <div className="filter-group">
-            <h3>Meat Type</h3>
-            <div className="filter-options" role="group" aria-label="Filter by meat type">
-              <button className="filter-btn active" data-filter="all">All</button>
-              <button className="filter-btn" data-filter="beef">Beef</button>
-              <button className="filter-btn" data-filter="lamb">Lamb</button>
-              <button className="filter-btn" data-filter="pork">Pork</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <FilterSection onFilter={handleFilterChange} />
       
-      <section className="results-section" aria-labelledby="resultsHeading">
-        <h2 id="resultsHeading">Results</h2>
-        <p id="resultsCount" aria-live="polite" className="results-count">
-          {getResultsCountText()}
-        </p>
-        
-        {isLoading ? (
-          <div className="loading-indicator">
-            <span className="sr-only">Loading results</span>
-            <div className="spinner"></div>
-          </div>
-        ) : (
-          <div id="resultsGrid" className="results-grid">
-            {results.length === 0 ? (
-              <p id="noResults" className="no-results">
-                No meat cuts match your filters. Try adjusting your criteria.
-              </p>
-            ) : (
-              <div className="meat-card">
-                <div className="meat-content">
-                  <span className="meat-type">Beef</span>
-                  <h3 className="meat-title">Topside</h3>
-                  <p className="meat-description">A lean cut from the hindquarter, commonly used for roasting.</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </section>
+      <ResultsSection 
+        results={results} 
+        loading={loading} 
+        error={error} 
+      />
     </>
   );
 };
