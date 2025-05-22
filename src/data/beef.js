@@ -1,7 +1,4 @@
-/**
- * Beef cuts data for the AHDB Meat Purchasing Guide
- */
-
+// src/data/beef.js - Expanded with more meat cuts
 export const beefCuts = [
   {
     id: 'topside',
@@ -40,57 +37,6 @@ export const beefCuts = [
         <li>Topside can be cut into steaks though they are less tender than other steak cuts</li>
         <li>Can be marinated to enhance tenderness and flavor</li>
       </ul>
-      
-      <h3>Nutritional Information</h3>
-      <p>Topside is one of the leanest beef cuts available, making it a good choice for those looking to reduce fat intake while still enjoying beef.</p>
-      
-      <table>
-        <tr>
-          <th>Nutrient</th>
-          <th>Amount (per 100g)</th>
-        </tr>
-        <tr>
-          <td>Calories</td>
-          <td>Approximately 160 kcal</td>
-        </tr>
-        <tr>
-          <td>Protein</td>
-          <td>~27g</td>
-        </tr>
-        <tr>
-          <td>Fat</td>
-          <td>~5g</td>
-        </tr>
-      </table>
-      
-      <h3>Recipe Suggestion: Traditional Roast Beef with Yorkshire Puddings</h3>
-      <h4>Ingredients:</h4>
-      <ul>
-        <li>1.5kg topside of beef</li>
-        <li>2 tbsp olive oil</li>
-        <li>1 tsp English mustard powder</li>
-        <li>1 tsp dried thyme</li>
-        <li>Salt and freshly ground black pepper</li>
-      </ul>
-      
-      <h4>For the Yorkshire puddings:</h4>
-      <ul>
-        <li>140g plain flour</li>
-        <li>4 eggs</li>
-        <li>200ml milk</li>
-        <li>Sunflower oil for cooking</li>
-      </ul>
-      
-      <h4>Method:</h4>
-      <ol>
-        <li>Remove the beef from the fridge 30 minutes before cooking</li>
-        <li>Preheat the oven to 220°C/200°C fan/gas 7</li>
-        <li>Mix the olive oil with the mustard powder, thyme, and seasoning</li>
-        <li>Rub this mixture all over the beef</li>
-        <li>Place in a roasting tin and cook for 20 minutes</li>
-        <li>Reduce the oven to 170°C/150°C fan/gas 3 and cook for 20 minutes per 500g for medium-rare</li>
-        <li>Rest the meat for at least 20 minutes before carving</li>
-      </ol>
     `
   },
   {
@@ -122,68 +68,6 @@ export const beefCuts = [
       <p><strong>Slow Cooking:</strong> Excellent for pot roasts and casseroles where the long, slow cooking breaks down the connective tissues, resulting in tender meat.</p>
       
       <p><strong>Braising:</strong> Cut into smaller pieces and braise with aromatic vegetables, herbs and stock for a flavorful dish.</p>
-      
-      <p><strong>Curing:</strong> Traditionally used for making salt beef or corned beef, where it's cured in a brine solution before cooking.</p>
-      
-      <h3>Butcher's Tips</h3>
-      <ul>
-        <li>Ask your butcher to leave a good layer of fat which will baste the meat as it cooks</li>
-        <li>For roasting, tie the joint at regular intervals to help it maintain its shape</li>
-        <li>The grain of silverside runs in one direction, so it's important to carve across the grain to maximize tenderness</li>
-        <li>Leftovers make excellent cold cuts for sandwiches</li>
-      </ul>
-      
-      <h3>Nutritional Information</h3>
-      <p>Silverside is a lean cut with good nutritional value.</p>
-      
-      <table>
-        <tr>
-          <th>Nutrient</th>
-          <th>Amount (per 100g)</th>
-        </tr>
-        <tr>
-          <td>Calories</td>
-          <td>Approximately 170 kcal</td>
-        </tr>
-        <tr>
-          <td>Protein</td>
-          <td>~28g</td>
-        </tr>
-        <tr>
-          <td>Fat</td>
-          <td>~6g</td>
-        </tr>
-      </table>
-      
-      <h3>Recipe Suggestion: Slow-Cooked Beef Silverside with Root Vegetables</h3>
-      <h4>Ingredients:</h4>
-      <ul>
-        <li>1.5kg silverside of beef</li>
-        <li>2 tbsp vegetable oil</li>
-        <li>2 onions, roughly chopped</li>
-        <li>2 carrots, roughly chopped</li>
-        <li>2 celery sticks, roughly chopped</li>
-        <li>4 garlic cloves, crushed</li>
-        <li>2 bay leaves</li>
-        <li>4 sprigs of thyme</li>
-        <li>200ml red wine</li>
-        <li>500ml beef stock</li>
-        <li>2 tbsp tomato purée</li>
-        <li>Salt and freshly ground black pepper</li>
-      </ul>
-      
-      <h4>Method:</h4>
-      <ol>
-        <li>Preheat the oven to 160°C/140°C fan/gas 3</li>
-        <li>Season the beef well with salt and pepper</li>
-        <li>Heat the oil in a large casserole dish and brown the beef on all sides</li>
-        <li>Remove the beef and set aside, then add the vegetables to the dish and cook until softened</li>
-        <li>Add the garlic, bay leaves, and thyme, and cook for another minute</li>
-        <li>Pour in the wine and bring to the boil, scraping up any browned bits from the bottom</li>
-        <li>Stir in the stock and tomato purée</li>
-        <li>Return the beef to the dish, cover, and cook in the oven for 3-3.5 hours until tender</li>
-        <li>Rest for 20 minutes before carving across the grain</li>
-      </ol>
     `
   },
   {
@@ -215,14 +99,130 @@ export const beefCuts = [
       <p><strong>Roasting:</strong> A sirloin joint makes an excellent roast, best cooked to medium-rare at 190°C for approximately 15 minutes per 500g plus 15 minutes extra.</p>
       
       <p><strong>Pan-frying:</strong> Cook steaks in a very hot cast iron pan with a small amount of oil. Finish with butter for added richness.</p>
+    `
+  },
+  {
+    id: 'ribeye',
+    name: 'Ribeye',
+    type: 'Beef',
+    externalUrl: 'https://ahdb.org.uk/ribeye',
+    description: 'A highly marbled, tender cut from the rib section. Known for its rich flavor and juiciness due to its fat content.',
+    image: '/assets/images/beef/ribeye.jpg',
+    keywords: ['premium', 'steak', 'marbling', 'juicy', 'rich'],
+    cookingMethods: ['Grilling', 'Pan-frying', 'Roasting'],
+    characteristics: 'Highly marbled, tender, rich flavor',
+    alternatives: ['Sirloin', 'T-Bone'],
+    fullDescription: `
+      <h2>Ribeye</h2>
+      <p>Ribeye is a premium cut from the rib section of the beef. It's highly prized for its rich flavor and tenderness, which comes from the significant marbling of fat throughout the meat.</p>
       
-      <h3>Butcher's Tips</h3>
+      <h3>Characteristics</h3>
       <ul>
-        <li>Choose sirloin with a good amount of marbling for the best flavor</li>
-        <li>For steaks, look for cuts that are at least 2.5cm thick for optimal cooking</li>
-        <li>The fat cap on sirloin should be crisp and golden when cooked properly</li>
-        <li>Rest sirloin for at least 5 minutes after cooking to allow juices to redistribute</li>
+        <li>Excellent marbling throughout the meat</li>
+        <li>Rich, buttery flavor</li>
+        <li>Tender texture with good bite</li>
+        <li>Premium-priced cut</li>
       </ul>
       
-      <h3>Nutritional Information</h3>
-      <p>Sirloin provides a good balance of protein and fat.</p>
+      <h3>Cooking Methods</h3>
+      <p><strong>Grilling:</strong> Perfect for the barbecue, cook to medium-rare or medium to allow the fat to render and baste the meat.</p>
+      
+      <p><strong>Pan-frying:</strong> Use a very hot pan to sear the outside, then reduce heat to finish cooking. Rest for at least 5 minutes before serving.</p>
+      
+      <p><strong>Roasting:</strong> A ribeye roast (also called prime rib) makes an impressive centerpiece for special occasions.</p>
+    `
+  },
+  {
+    id: 'brisket',
+    name: 'Brisket',
+    type: 'Beef',
+    externalUrl: 'https://ahdb.org.uk/brisket',
+    description: 'A flavorful cut from the breast area that benefits from slow cooking to break down the tough connective tissue.',
+    image: '/assets/images/beef/brisket.jpg',
+    keywords: ['slow cook', 'economical', 'flavorful', 'traditional'],
+    cookingMethods: ['Slow cooking', 'Smoking', 'Braising'],
+    characteristics: 'Tough when undercooked, tender when slow-cooked, rich flavor',
+    alternatives: ['Chuck', 'Shin'],
+    fullDescription: `
+      <h2>Brisket</h2>
+      <p>Brisket comes from the breast area of the beef and contains a significant amount of connective tissue. It requires slow cooking to break down these tissues, resulting in tender, flavorful meat.</p>
+      
+      <h3>Characteristics</h3>
+      <ul>
+        <li>Tough when undercooked, wonderfully tender when cooked properly</li>
+        <li>Rich, deep beef flavor</li>
+        <li>Usually sold with a good layer of fat</li>
+        <li>Economical cut with excellent results when prepared correctly</li>
+      </ul>
+      
+      <h3>Cooking Methods</h3>
+      <p><strong>Slow Cooking:</strong> Cook in a slow cooker or low oven (130-150°C) for 4-6 hours until the meat is fork-tender.</p>
+      
+      <p><strong>Smoking:</strong> Popular in American barbecue, smoked brisket is cooked low and slow over wood smoke for up to 12 hours.</p>
+      
+      <p><strong>Braising:</strong> Brown the meat, then cook slowly in liquid in a covered pot until tender.</p>
+    `
+  },
+  {
+    id: 'fillet',
+    name: 'Fillet',
+    type: 'Beef',
+    externalUrl: 'https://ahdb.org.uk/fillet',
+    description: 'The most tender cut of beef, located along the backbone. Very lean with little fat marbling, mild in flavor.',
+    image: '/assets/images/beef/fillet.jpg',
+    keywords: ['premium', 'tender', 'steak', 'lean'],
+    cookingMethods: ['Pan-frying', 'Roasting', 'Grilling'],
+    characteristics: 'Extremely tender, lean, mild flavor',
+    alternatives: ['Sirloin', 'Ribeye'],
+    fullDescription: `
+      <h2>Fillet</h2>
+      <p>The fillet, also known as tenderloin, is the most tender cut of beef. It comes from a muscle that does very little work, resulting in exceptionally tender meat with a mild flavor.</p>
+      
+      <h3>Characteristics</h3>
+      <ul>
+        <li>Extremely tender texture</li>
+        <li>Very lean with little fat marbling</li>
+        <li>Mild beef flavor compared to other cuts</li>
+        <li>The most expensive cut of beef</li>
+      </ul>
+      
+      <h3>Cooking Methods</h3>
+      <p><strong>Pan-frying:</strong> Quick cooking at high heat to rare or medium-rare. Often served with a sauce to enhance the mild flavor.</p>
+      
+      <p><strong>Roasting:</strong> Whole fillet makes an impressive roast. Best cooked rare to medium-rare.</p>
+      
+      <p><strong>Grilling:</strong> Quick cooking over high heat, being careful not to overcook this lean cut.</p>
+    `
+  },
+  {
+    id: 'rump',
+    name: 'Rump',
+    type: 'Beef',
+    externalUrl: 'https://ahdb.org.uk/rump',
+    description: 'A flavorful steak cut from the hindquarter with good marbling. Firmer texture than premium cuts but excellent taste.',
+    image: '/assets/images/beef/rump.jpg',
+    keywords: ['steak', 'economical', 'flavorful', 'versatile'],
+    cookingMethods: ['Grilling', 'Pan-frying', 'Roasting'],
+    characteristics: 'Good flavor, firmer texture, economical',
+    alternatives: ['Sirloin', 'Ribeye'],
+    fullDescription: `
+      <h2>Rump</h2>
+      <p>Rump steak comes from the hindquarter of the beef. It's a flavorful cut with a firmer texture than premium cuts like fillet or ribeye, but offers excellent value and taste.</p>
+      
+      <h3>Characteristics</h3>
+      <ul>
+        <li>Full, robust beef flavor</li>
+        <li>Firmer texture than premium steaks</li>
+        <li>Good marbling throughout</li>
+        <li>More economical than fillet or ribeye</li>
+      </ul>
+      
+      <h3>Cooking Methods</h3>
+      <p><strong>Grilling:</strong> Cook to medium-rare for the best balance of tenderness and flavor.</p>
+      
+      <p><strong>Pan-frying:</strong> Sear in a very hot pan, then reduce heat to finish. Rest well before serving.</p>
+      
+      <p><strong>Roasting:</strong> A whole rump joint can be roasted for a more economical alternative to sirloin.</p>
+    `
+  }
+];
