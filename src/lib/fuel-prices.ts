@@ -1,5 +1,6 @@
 import type { FuelStation, Location } from './types';
 import { savePriceSnapshotsBatch, saveUKAverage } from './db';
+import { fetchCMAStationsNear } from './cma-api';
 
 // Public price feed URLs - these are attempted first, fallback to demo data if unavailable
 const ASDA_URL = (lat: number, lng: number) =>
@@ -239,11 +240,23 @@ export async function getFuelPrices(location: Location, radius: number = 10): Pr
   let stations: FuelStation[] | null = null;
   let isDemoData = false;
 
-  // Try Asda first
+  // Try CMA API first (UK government mandatory fuel price scheme, live Feb 2026)
   try {
-    stations = await fetchAsdaPrices(location);
+    const cmaStations = await fetchCMAStationsNear(location.lat, location.lng, radius);
+    if (cmaStations && cmaStations.length > 0) {
+      stations = cmaStations;
+    }
   } catch {
-    // continue
+    // continue to fallbacks
+  }
+
+  // Try Asda if CMA failed
+  if (!stations || stations.length === 0) {
+    try {
+      stations = await fetchAsdaPrices(location);
+    } catch {
+      // continue
+    }
   }
 
   // Try Tesco if Asda failed

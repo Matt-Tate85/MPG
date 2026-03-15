@@ -14,12 +14,17 @@ import {
   SlidersHorizontal,
   ArrowUpDown,
   List,
+  Navigation,
+  Bell,
 } from 'lucide-react';
 import Header from '@/components/Header';
 import { FuelStationCard, EVChargerCard } from '@/components/StationCard';
 import PriceChart from '@/components/PriceChart';
 import WorthItCalculator from '@/components/WorthItCalculator';
 import RegLookup from '@/components/RegLookup';
+import StatsPanel from '@/components/StatsPanel';
+import RoutePlanner from '@/components/RoutePlanner';
+import PriceAlert from '@/components/PriceAlert';
 import type { FuelStation, EVCharger, Location, TabOption, SortOption, Vehicle } from '@/lib/types';
 import { geocodePostcode } from '@/lib/calculations';
 
@@ -28,6 +33,7 @@ const MapComponent = dynamic(() => import('@/components/Map'), { ssr: false });
 const DEFAULT_LOCATION: Location = { lat: 51.5074, lng: -0.1278 }; // London
 
 type StationFilter = 'all' | 'fuel' | 'ev';
+type FuelTypeFilter = 'all' | 'petrol' | 'diesel' | 'super_unleaded' | 'lpg';
 
 function LoadingSpinner({ message }: { message?: string }) {
   return (
@@ -54,6 +60,7 @@ export default function Home() {
 
   const [sortBy, setSortBy] = useState<SortOption>('distance');
   const [filterBy, setFilterBy] = useState<StationFilter>('all');
+  const [fuelTypeFilter, setFuelTypeFilter] = useState<FuelTypeFilter>('all');
   const [showMap, setShowMap] = useState(true);
 
   const [selectedFuelStation, setSelectedFuelStation] = useState<FuelStation | null>(null);
@@ -183,8 +190,17 @@ export default function Home() {
     }
   };
 
-  // Sort stations
-  const sortedFuelStations = [...fuelStations].sort((a, b) => {
+  // Sort and filter stations
+  const filteredFuelStations = fuelStations.filter((s) => {
+    if (fuelTypeFilter === 'all') return true;
+    if (fuelTypeFilter === 'petrol') return !!s.petrol_pence;
+    if (fuelTypeFilter === 'diesel') return !!s.diesel_pence;
+    if (fuelTypeFilter === 'super_unleaded') return !!s.super_unleaded_pence;
+    if (fuelTypeFilter === 'lpg') return !!s.lpg_pence;
+    return true;
+  });
+
+  const sortedFuelStations = [...filteredFuelStations].sort((a, b) => {
     switch (sortBy) {
       case 'price_petrol':
         return (a.petrol_pence || 999) - (b.petrol_pence || 999);
@@ -199,7 +215,9 @@ export default function Home() {
 
   const tabs: { id: TabOption; label: string; icon: React.ReactNode }[] = [
     { id: 'nearby', label: 'Nearby', icon: <MapPin className="w-4 h-4" /> },
+    { id: 'route', label: 'Route', icon: <Navigation className="w-4 h-4" /> },
     { id: 'compare', label: 'Compare', icon: <ArrowUpDown className="w-4 h-4" /> },
+    { id: 'stats', label: 'Stats', icon: <BarChart2 className="w-4 h-4" /> },
     { id: 'history', label: 'History', icon: <BarChart2 className="w-4 h-4" /> },
     { id: 'calculator', label: 'Calculator', icon: <Calculator className="w-4 h-4" /> },
   ];
@@ -309,7 +327,7 @@ export default function Home() {
             <div>
               {/* Controls */}
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                {/* Filter */}
+                {/* Station type filter */}
                 <div className="flex rounded-lg bg-navy-800 border border-navy-700 p-0.5">
                   {([
                     { id: 'all', label: 'All', icon: null },
@@ -330,6 +348,31 @@ export default function Home() {
                     </button>
                   ))}
                 </div>
+
+                {/* Fuel type filter (only when showing fuel) */}
+                {(filterBy === 'all' || filterBy === 'fuel') && (
+                  <div className="flex rounded-lg bg-navy-800 border border-navy-700 p-0.5">
+                    {([
+                      { id: 'all', label: 'All fuel' },
+                      { id: 'petrol', label: 'Petrol' },
+                      { id: 'diesel', label: 'Diesel' },
+                      { id: 'super_unleaded', label: 'Super' },
+                      { id: 'lpg', label: 'LPG' },
+                    ] as const).map((f) => (
+                      <button
+                        key={f.id}
+                        onClick={() => setFuelTypeFilter(f.id)}
+                        className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                          fuelTypeFilter === f.id
+                            ? 'bg-fuel-amber/20 text-fuel-amber'
+                            : 'text-gray-500 hover:text-gray-300'
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {/* Sort */}
                 {(filterBy === 'all' || filterBy === 'fuel') && (
@@ -364,7 +407,7 @@ export default function Home() {
                   {(filterBy === 'all' || filterBy === 'fuel') && (
                     <span className="flex items-center gap-1">
                       <Fuel className="w-3 h-3 text-fuel-amber" />
-                      {fuelStations.length}
+                      {filteredFuelStations.length}
                     </span>
                   )}
                   {(filterBy === 'all' || filterBy === 'ev') && (
@@ -425,6 +468,7 @@ export default function Home() {
                                 setActiveTab('compare');
                               }}
                               userMpg={userMpg}
+                              fillLitres={50}
                             />
                           ))
                         )}
@@ -461,6 +505,20 @@ export default function Home() {
                   </div>
                 </div>
               )}
+
+              {/* Price alerts at the bottom of Nearby */}
+              {fuelStations.length > 0 && (
+                <div className="mt-6">
+                  <PriceAlert stations={fuelStations} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ROUTE TAB */}
+          {activeTab === 'route' && (
+            <div className="max-w-4xl mx-auto">
+              <RoutePlanner vehicle={vehicle} allStations={fuelStations} />
             </div>
           )}
 
@@ -524,6 +582,13 @@ export default function Home() {
                 farStation={compareStation2}
                 userMpg={userMpg}
               />
+            </div>
+          )}
+
+          {/* STATS TAB */}
+          {activeTab === 'stats' && (
+            <div className="max-w-4xl mx-auto">
+              <StatsPanel stations={fuelStations} />
             </div>
           )}
 
@@ -622,7 +687,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-navy-800 border-t border-navy-700 px-4 py-3 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
-          <span>UK Fuel & EV Tracker — prices may be delayed or estimated</span>
+          <span>UK Fuel &amp; EV Tracker — prices may be delayed or estimated</span>
           <div className="flex items-center gap-3">
             <span>
               Data:{' '}
@@ -632,6 +697,10 @@ export default function Home() {
               {' · '}
               <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
                 OpenStreetMap
+              </a>
+              {' · '}
+              <a href="https://www.gov.uk/government/collections/road-fuel-price-data-scheme" target="_blank" rel="noopener noreferrer" className="text-fuel-amber hover:underline">
+                CMA Fuel Data
               </a>
             </span>
           </div>

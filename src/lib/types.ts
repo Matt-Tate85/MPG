@@ -5,6 +5,16 @@ export interface Location {
   lng: number;
 }
 
+export interface StationFacilities {
+  car_wash: boolean;
+  shop: boolean;
+  coffee: boolean;
+  air_pump: boolean;
+  toilets: boolean;
+  hgv_access: boolean;
+  adblue: boolean;
+}
+
 export interface FuelStation {
   id: string;
   name: string;
@@ -14,9 +24,12 @@ export interface FuelStation {
   lng: number;
   petrol_pence?: number;
   diesel_pence?: number;
+  super_unleaded_pence?: number;
+  lpg_pence?: number;
   last_updated?: string;
   isDemoData?: boolean;
   distance_miles?: number;
+  facilities?: StationFacilities;
 }
 
 export interface EVCharger {
@@ -113,4 +126,5 @@ export interface EVChargersResponse {
 }
 
 export type SortOption = 'price_petrol' | 'price_diesel' | 'distance' | 'effective_cost';
-export type TabOption = 'nearby' | 'compare' | 'history' | 'calculator';
+export type TabOption = 'nearby' | 'route' | 'compare' | 'stats' | 'history' | 'calculator';
+export type FuelTypeFilter = 'petrol' | 'diesel' | 'super_unleaded' | 'lpg';

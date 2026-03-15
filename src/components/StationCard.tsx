@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Fuel, Zap, TrendingDown, Clock, AlertCircle, CheckCircle } from 'lucide-react';
+import { MapPin, Fuel, Zap, TrendingDown, Clock, AlertCircle, CheckCircle, TrendingUp, Minus } from 'lucide-react';
 import type { FuelStation, EVCharger } from '@/lib/types';
 
 interface FuelStationCardProps {
@@ -10,6 +10,8 @@ interface FuelStationCardProps {
   isSelected?: boolean;
   sortBy?: string;
   userMpg?: number;
+  trend?: number; // positive = rising pence, negative = falling pence
+  fillLitres?: number; // default 50
 }
 
 interface EVChargerCardProps {
@@ -32,13 +34,79 @@ function priceBadgeColor(pence: number): string {
   return 'bg-red-900/40 text-red-400 border-red-700';
 }
 
+function FillUpCost({ pence, litres }: { pence: number; litres: number }) {
+  const cost = (pence / 100) * litres;
+  return (
+    <div className="text-xs text-gray-400 mt-1 text-center">
+      Fill {litres}L ={' '}
+      <span className="font-semibold text-white">£{cost.toFixed(2)}</span>
+    </div>
+  );
+}
+
+function TrendBadge({ trend }: { trend: number }) {
+  if (trend === 0) {
+    return (
+      <span className="flex items-center gap-0.5 text-xs text-gray-400">
+        <Minus className="w-3 h-3" />
+        flat
+      </span>
+    );
+  }
+  if (trend > 0) {
+    return (
+      <span className="flex items-center gap-0.5 text-xs text-red-400">
+        <TrendingUp className="w-3 h-3" />
+        +{trend.toFixed(1)}p
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center gap-0.5 text-xs text-ev-green">
+      <TrendingDown className="w-3 h-3" />
+      {trend.toFixed(1)}p
+    </span>
+  );
+}
+
+function FacilitiesRow({ facilities }: { facilities: NonNullable<FuelStation['facilities']> }) {
+  const items: { emoji: string; label: string; active: boolean }[] = [
+    { emoji: '🚗', label: 'Car wash', active: facilities.car_wash },
+    { emoji: '🛒', label: 'Shop', active: facilities.shop },
+    { emoji: '☕', label: 'Coffee', active: facilities.coffee },
+    { emoji: '💨', label: 'Air pump', active: facilities.air_pump },
+    { emoji: '🚛', label: 'HGV', active: facilities.hgv_access },
+  ];
+
+  const active = items.filter((i) => i.active);
+  if (active.length === 0) return null;
+
+  return (
+    <div className="mt-2 flex gap-1.5 flex-wrap">
+      {active.map((item) => (
+        <span
+          key={item.label}
+          title={item.label}
+          className="text-xs px-1.5 py-0.5 rounded bg-navy-700 border border-navy-600 text-gray-400 cursor-default"
+        >
+          {item.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function FuelStationCard({
   station,
   onSelect,
   onWorthIt,
   isSelected,
+  trend,
+  fillLitres = 50,
 }: FuelStationCardProps) {
   const hasPrice = station.petrol_pence || station.diesel_pence;
+  // Use petrol for fill-up cost if available, otherwise diesel
+  const fillPricePence = station.petrol_pence ?? station.diesel_pence;
 
   return (
     <div
@@ -61,7 +129,10 @@ export function FuelStationCard({
             <Fuel className="w-5 h-5 text-fuel-amber" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-white font-semibold text-sm truncate">{station.name}</h3>
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="text-white font-semibold text-sm truncate">{station.name}</h3>
+              {trend !== undefined && <TrendBadge trend={trend} />}
+            </div>
             <div className="flex items-center gap-1 text-navy-600 text-xs mt-0.5">
               <MapPin className="w-3 h-3" />
               <span className="truncate">{station.address}</span>
@@ -75,29 +146,55 @@ export function FuelStationCard({
         </div>
 
         {hasPrice ? (
-          <div className="mt-3 flex gap-2">
-            {station.petrol_pence && (
-              <div className={`flex-1 rounded-lg border px-3 py-2 text-center ${priceBadgeColor(station.petrol_pence)}`}>
-                <div className={`text-lg font-bold ${priceColor(station.petrol_pence)}`}>
-                  {station.petrol_pence.toFixed(1)}p
+          <>
+            <div className="mt-3 flex gap-2">
+              {station.petrol_pence && (
+                <div className={`flex-1 rounded-lg border px-3 py-2 text-center ${priceBadgeColor(station.petrol_pence)}`}>
+                  <div className={`text-lg font-bold ${priceColor(station.petrol_pence)}`}>
+                    {station.petrol_pence.toFixed(1)}p
+                  </div>
+                  <div className="text-xs opacity-70">Petrol</div>
                 </div>
-                <div className="text-xs opacity-70">Petrol</div>
-              </div>
-            )}
-            {station.diesel_pence && (
-              <div className={`flex-1 rounded-lg border px-3 py-2 text-center ${priceBadgeColor(station.diesel_pence)}`}>
-                <div className={`text-lg font-bold ${priceColor(station.diesel_pence)}`}>
-                  {station.diesel_pence.toFixed(1)}p
+              )}
+              {station.diesel_pence && (
+                <div className={`flex-1 rounded-lg border px-3 py-2 text-center ${priceBadgeColor(station.diesel_pence)}`}>
+                  <div className={`text-lg font-bold ${priceColor(station.diesel_pence)}`}>
+                    {station.diesel_pence.toFixed(1)}p
+                  </div>
+                  <div className="text-xs opacity-70">Diesel</div>
                 </div>
-                <div className="text-xs opacity-70">Diesel</div>
-              </div>
+              )}
+              {station.super_unleaded_pence && (
+                <div className={`flex-1 rounded-lg border px-3 py-2 text-center ${priceBadgeColor(station.super_unleaded_pence)}`}>
+                  <div className={`text-lg font-bold ${priceColor(station.super_unleaded_pence)}`}>
+                    {station.super_unleaded_pence.toFixed(1)}p
+                  </div>
+                  <div className="text-xs opacity-70">Super</div>
+                </div>
+              )}
+              {station.lpg_pence && (
+                <div className="flex-1 rounded-lg border px-3 py-2 text-center bg-purple-900/30 border-purple-700 text-purple-300">
+                  <div className="text-lg font-bold text-purple-300">
+                    {station.lpg_pence.toFixed(1)}p
+                  </div>
+                  <div className="text-xs opacity-70">LPG</div>
+                </div>
+              )}
+            </div>
+
+            {/* Fill-up cost line */}
+            {fillPricePence && (
+              <FillUpCost pence={fillPricePence} litres={fillLitres} />
             )}
-          </div>
+          </>
         ) : (
           <div className="mt-3 py-2 px-3 rounded-lg bg-navy-700 text-navy-600 text-xs text-center">
             Price not available
           </div>
         )}
+
+        {/* Facilities row */}
+        {station.facilities && <FacilitiesRow facilities={station.facilities} />}
 
         {onWorthIt && hasPrice && (
           <button
