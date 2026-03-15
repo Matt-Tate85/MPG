@@ -13,6 +13,12 @@ export interface StationFacilities {
   toilets: boolean;
   hgv_access: boolean;
   adblue: boolean;
+  atm: boolean;
+  open_24h: boolean;
+  // Attached retailer/shop brand
+  shop_brand?: string; // e.g. "Sainsbury's Local", "Tesco Express", "M&S Simply Food", "Spar", "Londis", "Costa", "Greggs"
+  food_brand?: string; // e.g. "McDonald's", "Greggs", "Subway", "KFC"
+  coffee_brand?: string; // e.g. "Costa Express", "Starbucks"
 }
 
 export interface FuelStation {
