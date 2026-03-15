@@ -25,6 +25,9 @@ import RegLookup from '@/components/RegLookup';
 import StatsPanel from '@/components/StatsPanel';
 import RoutePlanner from '@/components/RoutePlanner';
 import PriceAlert from '@/components/PriceAlert';
+import MarginTracker from '@/components/MarginTracker';
+import LoyaltyCalculator from '@/components/LoyaltyCalculator';
+import AnnualCostCalculator from '@/components/AnnualCostCalculator';
 import type { FuelStation, EVCharger, Location, TabOption, SortOption, Vehicle } from '@/lib/types';
 import { geocodePostcode } from '@/lib/calculations';
 
@@ -34,6 +37,8 @@ const DEFAULT_LOCATION: Location = { lat: 51.5074, lng: -0.1278 }; // London
 
 type StationFilter = 'all' | 'fuel' | 'ev';
 type FuelTypeFilter = 'all' | 'petrol' | 'diesel' | 'super_unleaded' | 'lpg';
+type ShopFilter = 'all' | 'supermarket' | 'spar' | 'londis' | 'ms' | 'tesco' | 'sainsburys' | 'coop' | 'food';
+type FacilityFilter = 'coffee' | 'car_wash' | 'atm' | 'hgv' | 'open_24h';
 
 function LoadingSpinner({ message }: { message?: string }) {
   return (
@@ -61,6 +66,8 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<SortOption>('distance');
   const [filterBy, setFilterBy] = useState<StationFilter>('all');
   const [fuelTypeFilter, setFuelTypeFilter] = useState<FuelTypeFilter>('all');
+  const [shopFilter, setShopFilter] = useState<ShopFilter>('all');
+  const [facilityFilters, setFacilityFilters] = useState<Set<FacilityFilter>>(new Set());
   const [showMap, setShowMap] = useState(true);
 
   const [selectedFuelStation, setSelectedFuelStation] = useState<FuelStation | null>(null);
@@ -190,13 +197,58 @@ export default function Home() {
     }
   };
 
+  const toggleFacilityFilter = (f: FacilityFilter) => {
+    setFacilityFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(f)) next.delete(f);
+      else next.add(f);
+      return next;
+    });
+  };
+
   // Sort and filter stations
   const filteredFuelStations = fuelStations.filter((s) => {
-    if (fuelTypeFilter === 'all') return true;
-    if (fuelTypeFilter === 'petrol') return !!s.petrol_pence;
-    if (fuelTypeFilter === 'diesel') return !!s.diesel_pence;
-    if (fuelTypeFilter === 'super_unleaded') return !!s.super_unleaded_pence;
-    if (fuelTypeFilter === 'lpg') return !!s.lpg_pence;
+    // Fuel type filter
+    if (fuelTypeFilter === 'petrol' && !s.petrol_pence) return false;
+    if (fuelTypeFilter === 'diesel' && !s.diesel_pence) return false;
+    if (fuelTypeFilter === 'super_unleaded' && !s.super_unleaded_pence) return false;
+    if (fuelTypeFilter === 'lpg' && !s.lpg_pence) return false;
+
+    // Shop filter
+    if (shopFilter !== 'all') {
+      const shopBrand = s.facilities?.shop_brand?.toLowerCase() ?? '';
+      const foodBrand = s.facilities?.food_brand?.toLowerCase() ?? '';
+      const SUPERMARKETS = ['sainsbury', 'tesco', 'm&s', 'asda', 'morrisons', 'waitrose', 'co-op', 'spar', 'londis', 'nisa', 'budgens', 'one stop', 'premier', 'costcutter'];
+      if (shopFilter === 'supermarket') {
+        const isSupermarket = SUPERMARKETS.some((b) => shopBrand.includes(b));
+        if (!isSupermarket) return false;
+      } else if (shopFilter === 'spar') {
+        if (!shopBrand.includes('spar')) return false;
+      } else if (shopFilter === 'londis') {
+        if (!shopBrand.includes('londis')) return false;
+      } else if (shopFilter === 'ms') {
+        if (!shopBrand.includes('m&s')) return false;
+      } else if (shopFilter === 'tesco') {
+        if (!shopBrand.includes('tesco')) return false;
+      } else if (shopFilter === 'sainsburys') {
+        if (!shopBrand.includes('sainsbury')) return false;
+      } else if (shopFilter === 'coop') {
+        if (!shopBrand.includes('co-op')) return false;
+      } else if (shopFilter === 'food') {
+        if (!foodBrand) return false;
+      }
+    }
+
+    // Facility filters
+    if (facilityFilters.size > 0) {
+      const fac = s.facilities;
+      if (facilityFilters.has('coffee') && !fac?.coffee && !fac?.coffee_brand) return false;
+      if (facilityFilters.has('car_wash') && !fac?.car_wash) return false;
+      if (facilityFilters.has('atm') && !fac?.atm) return false;
+      if (facilityFilters.has('hgv') && !fac?.hgv_access) return false;
+      if (facilityFilters.has('open_24h') && !fac?.open_24h) return false;
+    }
+
     return true;
   });
 
@@ -369,6 +421,52 @@ export default function Home() {
                         }`}
                       >
                         {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Shop filter */}
+                {(filterBy === 'all' || filterBy === 'fuel') && (
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={shopFilter}
+                      onChange={(e) => setShopFilter(e.target.value as ShopFilter)}
+                      className="bg-navy-800 border border-navy-700 text-gray-300 text-xs rounded-lg px-2 py-1.5"
+                    >
+                      <option value="all">Shop: All</option>
+                      <option value="supermarket">Supermarket</option>
+                      <option value="tesco">Tesco Express</option>
+                      <option value="sainsburys">Sainsbury&apos;s Local</option>
+                      <option value="ms">M&amp;S Simply Food</option>
+                      <option value="coop">Co-op</option>
+                      <option value="spar">Spar</option>
+                      <option value="londis">Londis</option>
+                      <option value="food">Food outlet</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* Facilities filter chips */}
+                {(filterBy === 'all' || filterBy === 'fuel') && (
+                  <div className="flex gap-1 flex-wrap">
+                    {([
+                      { id: 'coffee', label: '☕ Coffee' },
+                      { id: 'car_wash', label: '🚗 Car Wash' },
+                      { id: 'atm', label: '💳 ATM' },
+                      { id: 'hgv', label: '🚛 HGV' },
+                      { id: 'open_24h', label: '⚡ 24h' },
+                    ] as const).map((fac) => (
+                      <button
+                        key={fac.id}
+                        onClick={() => toggleFacilityFilter(fac.id)}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors border ${
+                          facilityFilters.has(fac.id)
+                            ? 'bg-fuel-amber/20 text-fuel-amber border-fuel-amber/40'
+                            : 'bg-navy-800 text-gray-500 border-navy-700 hover:text-gray-300'
+                        }`}
+                      >
+                        {fac.label}
                       </button>
                     ))}
                   </div>
@@ -587,8 +685,13 @@ export default function Home() {
 
           {/* STATS TAB */}
           {activeTab === 'stats' && (
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto space-y-6">
               <StatsPanel stations={fuelStations} />
+              <MarginTracker
+                pumpPricePence={
+                  fuelStations.find((s) => s.petrol_pence)?.petrol_pence
+                }
+              />
             </div>
           )}
 
@@ -648,6 +751,26 @@ export default function Home() {
               </div>
 
               <WorthItCalculator userMpg={userMpg} />
+
+              {/* Annual cost + EV comparison */}
+              <AnnualCostCalculator
+                defaultMpg={userMpg}
+                defaultPetrolPence={
+                  fuelStations.find((s) => s.petrol_pence)?.petrol_pence ?? 142
+                }
+                defaultFuelType={
+                  vehicle?.fuel_type?.toLowerCase().includes('diesel') ? 'diesel' : 'petrol'
+                }
+              />
+
+              {/* Loyalty discount calculator */}
+              <LoyaltyCalculator
+                pumpPricePence={
+                  fuelStations.find((s) => s.petrol_pence)?.petrol_pence ?? 142
+                }
+                fillLitres={50}
+                collapsed={false}
+              />
 
               {/* MPG reference card */}
               <div className="bg-navy-800 border border-navy-700 rounded-xl p-4">

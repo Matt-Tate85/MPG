@@ -69,13 +69,53 @@ function TrendBadge({ trend }: { trend: number }) {
   );
 }
 
+// Supermarket brands get a green badge; independents get orange
+const SUPERMARKET_BRANDS = new Set([
+  "sainsbury's local", 'tesco express', 'm&s simply food', 'asda', 'morrisons daily',
+  'waitrose', 'co-op', 'spar', 'londis', 'nisa', 'budgens', 'one stop', 'premier',
+  "mccoll's", 'costcutter',
+]);
+
+function ShopBrandBadge({ brand }: { brand: string }) {
+  const isSupermarket = SUPERMARKET_BRANDS.has(brand.toLowerCase());
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium border ${
+        isSupermarket
+          ? 'bg-green-900/40 text-ev-green border-green-700/50'
+          : 'bg-orange-900/40 text-orange-300 border-orange-700/50'
+      }`}
+    >
+      🛒 {brand}
+    </span>
+  );
+}
+
+function FoodBrandBadge({ brand }: { brand: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium border bg-purple-900/40 text-purple-300 border-purple-700/50">
+      🍔 {brand}
+    </span>
+  );
+}
+
+function CoffeeBrandBadge({ brand }: { brand: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium border bg-amber-900/40 text-amber-300 border-amber-700/50">
+      ☕ {brand}
+    </span>
+  );
+}
+
 function FacilitiesRow({ facilities }: { facilities: NonNullable<FuelStation['facilities']> }) {
   const items: { emoji: string; label: string; active: boolean }[] = [
     { emoji: '🚗', label: 'Car wash', active: facilities.car_wash },
-    { emoji: '🛒', label: 'Shop', active: facilities.shop },
-    { emoji: '☕', label: 'Coffee', active: facilities.coffee },
+    { emoji: '🛒', label: 'Shop', active: facilities.shop && !facilities.shop_brand },
+    { emoji: '☕', label: 'Coffee', active: facilities.coffee && !facilities.coffee_brand },
     { emoji: '💨', label: 'Air pump', active: facilities.air_pump },
     { emoji: '🚛', label: 'HGV', active: facilities.hgv_access },
+    { emoji: '💳', label: 'ATM', active: !!facilities.atm },
+    { emoji: '🕐', label: 'Open 24h', active: !!facilities.open_24h },
   ];
 
   const active = items.filter((i) => i.active);
@@ -124,6 +164,15 @@ export function FuelStationCard({
       )}
 
       <div className="p-4">
+        {/* Shop/food/coffee brand badges — shown prominently at top if present */}
+        {station.facilities && (station.facilities.shop_brand || station.facilities.food_brand || station.facilities.coffee_brand) && (
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {station.facilities.shop_brand && <ShopBrandBadge brand={station.facilities.shop_brand} />}
+            {station.facilities.food_brand && <FoodBrandBadge brand={station.facilities.food_brand} />}
+            {station.facilities.coffee_brand && <CoffeeBrandBadge brand={station.facilities.coffee_brand} />}
+          </div>
+        )}
+
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-lg bg-amber-900/30 border border-amber-700/40 flex items-center justify-center flex-shrink-0">
             <Fuel className="w-5 h-5 text-fuel-amber" />
