@@ -117,8 +117,10 @@ export default function PriceChart({ stationId, stationName, fuelType = 'petrol'
       ? (stationPoints[stationPoints.length - 1].station || 0) - (stationPoints[0].station || 0)
       : 0;
 
-  const latestPrice = stationPoints.length > 0 ? stationPoints[stationPoints.length - 1].station : null;
-  const latestUKAvg = chartData.length > 0 ? chartData[chartData.length - 1].ukAverage : null;
+  const latestPriceRaw = stationPoints.length > 0 ? stationPoints[stationPoints.length - 1].station : null;
+  const latestPrice: number | null = latestPriceRaw ?? null;
+  const latestUKAvgRaw = chartData.length > 0 ? chartData[chartData.length - 1].ukAverage : null;
+  const latestUKAvg: number | null = latestUKAvgRaw ?? null;
 
   return (
     <div className="bg-navy-800 rounded-xl border border-navy-700 p-4">
