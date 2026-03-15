@@ -11,12 +11,19 @@ import type { FuelStation, StationFacilities } from './types';
 // ---------------------------------------------------------------------------
 
 const SUPERMARKET_EXPRESS = [
+  // Supermarket-branded forecourt shops
   "Sainsbury's Local",
   'Tesco Express',
   'M&S Simply Food',
+  'M&S Food',
+  'ASDA on the Move',
+  'Asda on the Move',
+  'ASDA Express',
+  'Asda Express',
   'ASDA',
   'Morrisons Daily',
   'Waitrose',
+  // Symbol / franchise groups
   'Co-op',
   'Spar',
   'Londis',
@@ -26,6 +33,14 @@ const SUPERMARKET_EXPRESS = [
   'Premier',
   "McColl's",
   'Costcutter',
+  'Best-one',
+  'Bestway',
+  'Mace',
+  // Forecourt kiosk formats
+  'JET Jiffy',
+  'Shell Select',
+  'BP Connect',
+  'Esso On the Run',
 ];
 
 const FOOD_BRANDS = [
@@ -36,14 +51,23 @@ const FOOD_BRANDS = [
   'Burger King',
   'WHSmith',
   'Boots',
+  'Pret a Manger',
+  'Pret',
+  "Miss Millie's",
+  'Coco di Mama',
+  "Wrights",
+  'Post Office',
 ];
 
 const COFFEE_BRANDS = [
   'Costa Express',
+  'Costa Coffee',
   'Costa',
   'Starbucks',
   'Caffè Nero',
+  'Caffe Nero',
   'Wild Bean Cafe',
+  'Wild Bean',
 ];
 
 // ---------------------------------------------------------------------------

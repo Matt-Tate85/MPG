@@ -28,6 +28,8 @@ import PriceAlert from '@/components/PriceAlert';
 import MarginTracker from '@/components/MarginTracker';
 import LoyaltyCalculator from '@/components/LoyaltyCalculator';
 import AnnualCostCalculator from '@/components/AnnualCostCalculator';
+import HMRCCalculator from '@/components/HMRCCalculator';
+import SharePriceCard from '@/components/SharePriceCard';
 import type { FuelStation, EVCharger, Location, TabOption, SortOption, Vehicle } from '@/lib/types';
 import { geocodePostcode } from '@/lib/calculations';
 
@@ -692,6 +694,12 @@ export default function Home() {
                   fuelStations.find((s) => s.petrol_pence)?.petrol_pence
                 }
               />
+              {fuelStations.length >= 2 && (
+                <SharePriceCard
+                  stations={fuelStations}
+                  userLocation={location}
+                />
+              )}
             </div>
           )}
 
@@ -770,6 +778,15 @@ export default function Home() {
                 }
                 fillLitres={50}
                 collapsed={false}
+              />
+
+              {/* HMRC mileage/fuel cost calculator for tradespeople */}
+              <HMRCCalculator
+                defaultPrice={
+                  fuelStations.find((s) => s.diesel_pence)?.diesel_pence
+                  ?? fuelStations.find((s) => s.petrol_pence)?.petrol_pence
+                  ?? 142
+                }
               />
 
               {/* MPG reference card */}
