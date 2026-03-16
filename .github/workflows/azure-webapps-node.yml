@@ -48,16 +48,15 @@ jobs:
         npm run build --if-present
         npm run test --if-present
 
-    - name: Prepare standalone deployment
-      run: |
-        cp -r .next/static .next/standalone/.next/static
-        cp package.json .next/standalone/package.json
-
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4
       with:
         name: node-app
-        path: .next/standalone
+        path: |
+          .
+          !node_modules
+          !.git
+          !.github
 
   deploy:
     permissions:
@@ -73,7 +72,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: node-app
-        path: deploy
 
     - name: 'Deploy to Azure WebApp'
       id: deploy-to-webapp
@@ -81,4 +79,4 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: deploy
+        package: .
