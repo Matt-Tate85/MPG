@@ -2,7 +2,7 @@ const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
 
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV === 'development';
 const port = parseInt(process.env.PORT || '8080', 10);
 
 const app = next({ dev, port });
