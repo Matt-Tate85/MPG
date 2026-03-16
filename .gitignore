@@ -12,6 +12,8 @@
 # next.js
 /.next/
 /out/
+/dist_app/
+/node_modules.tar.gz
 
 # production
 /build

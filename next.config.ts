@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  distDir: 'dist_app',
   // better-sqlite3 is a native module, keep it server-side only
   serverExternalPackages: ['better-sqlite3'],
   // Allow images from OpenStreetMap tile servers
