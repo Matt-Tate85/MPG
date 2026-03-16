@@ -47,6 +47,7 @@ jobs:
         npm ci
         npm run build --if-present
         npm run test --if-present
+        cd node_modules && tar -czf ../node_modules.tar.gz .
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4
@@ -57,6 +58,7 @@ jobs:
           !node_modules
           !.git
           !.github
+          !.next
 
   deploy:
     permissions:
