@@ -26,6 +26,7 @@ env:
   AZURE_WEBAPP_NAME: MPG-Fuel         # Azure App Service name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '22.x'                # set this to the node version to use
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
