@@ -1,14 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // better-sqlite3 is a native module, only use on server
-      config.externals = config.externals || [];
-      config.externals.push('better-sqlite3');
-    }
-    return config;
-  },
+  // better-sqlite3 is a native module, keep it server-side only
+  serverExternalPackages: ['better-sqlite3'],
   // Allow images from OpenStreetMap tile servers
   images: {
     remotePatterns: [
